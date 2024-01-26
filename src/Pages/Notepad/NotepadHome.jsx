@@ -1,6 +1,6 @@
 import { useState } from "react";
 import profileImage from "../../assets/profile.png";
-import { FloatingLabel, Tooltip } from "flowbite-react";
+import { FloatingLabel, Tooltip, Spinner } from "flowbite-react";
 import { HiOutlinePower } from "react-icons/hi2";
 import { v4 as uuidv4 } from "uuid";
 import { RiEdit2Fill } from "react-icons/ri";
@@ -19,6 +19,7 @@ export default function NotepadHome() {
   const [notes, setNotes] = useState([initialNote]);
   const [activeNoteIndex, setActiveNoteIndex] = useState(0);
   const [editTitle, setEditTitle] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   console.log(notes);
 
@@ -54,16 +55,19 @@ export default function NotepadHome() {
       notes[activeNoteIndex].title === ""
     )
       return;
+    setLoading(true);
     const newNote = {
       id: uuidv4(),
       title: "",
       content: "",
       createdAt: date.toISOString(),
     };
-
-    setNotes((prevNotes) => {
-      return [newNote, ...prevNotes];
-    });
+    setTimeout(() => {
+      setLoading(false);
+      setNotes((prevNotes) => {
+        return [newNote, ...prevNotes];
+      });
+    }, 1000);
     setActiveNoteIndex(0);
   };
 
@@ -124,9 +128,12 @@ export default function NotepadHome() {
           <div className="px-5">
             <button
               onClick={addNote}
-              className="bg-[#244e78] w-full py-2 rounded hover:bg-[#295a8a] transition-all duration-200 ease-linear"
+              className="bg-[#244e78] w-full py-2 rounded hover:bg-[#295a8a] transition-all duration-200 ease-linear flex items-center justify-center gap-2"
             >
-              + Add New Note
+              <p>+ Add New Note</p>
+              {loading && (
+                <Spinner color="info" aria-label="Info spinner example" />
+              )}
             </button>
           </div>
           <div className="px-5">
@@ -177,8 +184,10 @@ export default function NotepadHome() {
                         variant="standard"
                         label="Edit Title"
                         sizing="sm"
+                        name="title"
                         value={notes[activeNoteIndex].title}
-                        className="border-[#336699] text-[#336699]"
+                        onChange={handleChange}
+                        className="border-[#336699] text-[#336699] w-[300px]"
                       />
                     </div>
                   )}
