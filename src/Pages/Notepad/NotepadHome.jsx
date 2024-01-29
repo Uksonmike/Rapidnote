@@ -3,8 +3,9 @@ import profileImage from "../../assets/profile.png";
 import { FloatingLabel, Tooltip, Spinner } from "flowbite-react";
 import { HiOutlinePower } from "react-icons/hi2";
 import { v4 as uuidv4 } from "uuid";
-import { RiEdit2Fill } from "react-icons/ri";
+import { RiEdit2Fill, RiDeleteBin6Line } from "react-icons/ri";
 import { SiDeepnote } from "react-icons/si";
+import { MdOutlineCancel } from "react-icons/md";
 
 export default function NotepadHome() {
   const date = new Date();
@@ -20,8 +21,7 @@ export default function NotepadHome() {
   const [activeNoteIndex, setActiveNoteIndex] = useState(0);
   const [editTitle, setEditTitle] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  console.log(notes);
+  const [deleteIcon, setDeleteIcon] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -137,7 +137,13 @@ export default function NotepadHome() {
             </button>
           </div>
           <div className="px-5">
-            <p className="my-7">Recents</p>
+            <div className="my-7 flex items-center justify-between">
+              <p>Recents</p>
+              <RiDeleteBin6Line
+                className="cursor-pointer"
+                onClick={() => setDeleteIcon(!deleteIcon)}
+              />
+            </div>
             <ul className="flex flex-col gap-3">
               {notes.map((note, index) => (
                 <button
@@ -145,11 +151,21 @@ export default function NotepadHome() {
                   key={note.id}
                   className={
                     activeNoteIndex === index
-                      ? "bg-[#fff] text-black w-full py-1 rounded-full font-medium transition-all duration-200 ease-linear"
-                      : "w-full py-1 rounded-full bg-[#244e78] hover:bg-[#295a8a] font-medium transition-all duration-200 ease-linear"
+                      ? "bg-[#fff] text-black w-full py-1 rounded-full font-medium transition-all duration-200 ease-linear relative"
+                      : "w-full py-1 rounded-full bg-[#244e78] hover:bg-[#295a8a] font-medium transition-all duration-200 ease-linear relative"
                   }
                 >
-                  {note?.title ? note?.title.slice(0, 16) : "New Note"}
+                  {note?.title ? note?.title.slice(0, 16) : "New Note"}{" "}
+                  {deleteIcon && (
+                    <div
+                      className={`absolute top-[6px] right-2 ${
+                        activeNoteIndex === index && "shake"
+                      }`}
+                      onClick={() => console.log("deleted note")}
+                    >
+                      <MdOutlineCancel size={20} color="red" />
+                    </div>
+                  )}
                 </button>
               ))}
             </ul>
